@@ -1,82 +1,113 @@
-data = ((1, 2, None), 4, (5, 6, None))
+class Users:
+    def __init__(self, username, name, email):
+        self.username = username
+        self.name = name
+        self.email = email
 
-class Treenode:
-    def __init__(self, key):
+class BSTtree:
+    def __init__(self, key, value=None):
         self.key = key
+        self.value = value
         self.left = None
         self.right = None
 
-    def height(self):
-        if self is None:
-            return 0
-        return 1 + max(Treenode.height(self.left), Treenode.height(self.right))
+    def insert(self, key, value):
+        if key < self.key:
+            if self.left is None:
+                self.left = BSTtree(key, value)
+            else:
+                self.left.insert(key, value)
+        elif key > self.key:
+            if self.right is None:
+                self.right = BSTtree(key, value)
+            else:
+                self.right.insert(key, value)
+        else:
+            self.value = value
+        return self
 
-    def size(self):
+    def find(self, key):
         if self is None:
-            return 0
-        return 1 + Treenode.size(self.left) + Treenode.size(self.right)
+            return None 
+        if key == self.key:
+            return self.value
+        if key < self.key:
+            if self.left is None:
+                return None
+            else:
+                return self.left.find(key)
+        elif key > self.key:
+            if self.right is None:
+                return None
+            else:
+                return self.right.find(key)
 
-    def inorder_transversal(self):
+    def update(self, key, value):
+        if self is None:
+            return BSTtree(key, value)
+        if key == self.key:
+            self.value = value
+        if key < self.key:
+            if self.left is None:
+                self.left = BSTtree(key, value)
+            else:
+                self.left.update(key, value)
+        elif key > self.key:
+            if self.right is None:
+                self.right = BSTtree(key, value)
+            else:
+                self.right.update(key, value)
+        return self
+            
+    def list_all(self):
+        results = []
         if self is None:
             return []
-        left = self.left.inorder_transversal() if self.left else []
-        right = self.right.inorder_transversal() if self.right else []
-        return left + [self.key] + right
-
-    def preorder_transversal(self):
-        if self is None:
-            return []
-        results = [self.key]
-        results += Treenode.preorder_transversal(self.left) if self.left else []
-        results += Treenode.preorder_transversal(self.right) if self.right else []
+        if self.left is not None:
+            results += self.left.list_all()
+        results.append(self.key)
+        if self.right is not None:
+            results += self.right.list_all()
         return results
 
-    def display(self, space="\t", factor=0):
+    def display(self, space="\t", level=0):
         if self is None:
-            print(factor * space + "0")
+            print(space * level + "∅")
             return
+        
         if self.left is None and self.right is None:
-            print(space * factor + str(self.key))
+            print(space * level + str(self.key))
             return
-        Treenode.display(self.right, space, factor + 1)
-        print(space * factor + str(self.key))
-        Treenode.display(self.left, space, factor + 1)
+            
+        self.right.display(space, level + 1)
+        print(space * level + str(self.key))
+        self.left.display(space, level)
 
-    def to_tuple(self):
-        if self is None:
-            return None
-        if self.left is None and self.right is None:
-            return self.key
-        left = self.left.to_tuple() if self.left else None
-        right = self.right.to_tuple() if self.right else None
-        return (left, self.key, right) if left or right else self.key
+# Create user objects
+jaadhesh = Users("jaadhesh", "Jadhesh", "jaadhesh@example.com")
+aakash = Users("aakash", "Aakash", "aakash@example.com")
+biraj = Users("biraj", "Biraj", "biraj@example.com")
+haemaeth = Users("haemaeth", "Haemaeth", "haemaeth@example.com")
+sonaksh = Users("sonaksh", "Sonaksh", "sonaksh@example.com")
+sidhat = Users("sidhat", "Sidhat", "sidhat@example.com")
 
-    @staticmethod
-    def parse_tuple(data):
-        if data is None:
-            return None
-        if isinstance(data, tuple):
-            if len(data) == 3:
-                node = Treenode(data[1])
-                node.left = Treenode.parse_tuple(data[0])
-                node.right = Treenode.parse_tuple(data[2])
-            else:
-                node = Treenode(data[0])
-                node.left = Treenode.parse_tuple(data[1]) if len(data) > 1 else None
-                node.right = Treenode.parse_tuple(data[2]) if len(data) > 2 else None
-            return node
-        else:
-            return Treenode(data)
-data = ((1, 2, None), 4, (5, 6, None))
-# Test the corrected implementation
-tree = Treenode.parse_tuple(data)
-if tree is None:
-    print("Failed to parse the tree. Check the input tuple structure.")
-else:
-    print("Tree as tuple:", tree.to_tuple())
-    print("\nTree structure:")
-    tree.display("     ")
-    print("\nHeight:", tree.height())
-    print("Size:", tree.size())
-    print("Inorder traversal:", tree.inorder_transversal())
-    print("Preorder traversal:", tree.preorder_transversal())
+# Create and populate BST
+bsttree = BSTtree(jaadhesh.username, jaadhesh)
+bsttree.insert(aakash.username, aakash)
+bsttree.insert(biraj.username, biraj)
+bsttree.insert(haemaeth.username, haemaeth)
+bsttree.insert(sonaksh.username, sonaksh)
+bsttree.insert(sidhat.username, sidhat)
+
+# Test find and update
+print("sidhat:", bsttree.find(sidhat.username))
+sidhat = Users("sidhat", "Sidhat Matako", "sidhat@gmail.com")
+bsttree.update(sidhat.username, sidhat)
+print("updated sidhat:", bsttree.find(sidhat.username))
+
+# List all keys
+print("All keys:", bsttree.list_all())
+
+# Display tree
+print("\nTree structure:")
+bsttree.display("    ")

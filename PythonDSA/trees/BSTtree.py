@@ -305,6 +305,8 @@ tree=Treenode.parse_tuple(data)
 #the method is an instance itself and the function can only call using the already assed tuple
 print("tuple",tree.to_tuple())
 #we ahve to enter what we want tobe dsplayes
+#the displaytree should always be displayed from the inside 
+#the display function  is writen from the inside because the self is on the inside
 tree.display("     ")
 tree.height()
 print(tree.size())
@@ -320,7 +322,13 @@ print(tree.preorder_transversal())
 #moving the tree downwards will help locate where the tree has a problem
 #we will also have to find where find is a return only and is not used to modify the tree hence we judt search the treee normaly
 #we chek if the key matches the key given if not we move downwards and we do not alter with the structure ofthe tree
-#we will then have a 
+#we will then have a list all which we will move in an inorder transversal starting from the left,key then right
+#we want to return  the intersections from down
+#we will start with the list of results
+#we will then heve to check for the intrersections from downwards util we reach upwards
+#we will ass the left and right in a dood order starting with left and then right
+#we will then append to the resultsthe keys because we are atrting from down we will have to append to the keys
+#if it wat a pre order we start with the keys in the list bacause it will orderitself beacause we are starting from the root and then left and right
 
 class BSTtree:
     #we will alow an optional parsing ofnthe value functions
@@ -337,10 +345,17 @@ class BSTtree:
             #this is done to insert reccursively
             if self.left is None:
                 #we call this inorder togo deeper
+                #the self.left=bst tee value  makes the structure
+                #compared to when assigning inserting we just ass direcly to the left
+                #this prepares a stage for  insertation
+                #we use the self.left=bsttree keyvalue for direct assignment of the left values
+                
                 self.left=BSTtree(key,value)#we after this insert at the left node 
             else:
-                self.left.insert(key,value)
+                #we do notuse self.left= because the self.left updates imediately and puting self.left=makes it redundatnt
+                self.left.insert(key,value)#this is used toreccurse deeper when searching
         #we check if the key is greater
+        #we return the whole self value
         elif key>self.key:
             #we call the value reccursivelyand insert to the right
             #we check if the left is a none
@@ -355,12 +370,14 @@ class BSTtree:
             #else we insert to the  right of it
             else:
                 #we insert directly to the right while it looks reccursively
-                self.right.insert(key,value)
+                self.right.insert(key,value)#this is used to reccurse deeper when searching
             #else we update if the key exists we update the value
             #we update because we have slready inserted and we must insert either to the left and right
         else:
             #if they are not greater or lesser means they are equal
             self.value=value
+            #we return the self toget back the structure but when finc=ding we do not need toget back the structure
+        return self
     def find(self,key):
     #we will check if the self is anone so as to return a none while fi
         if self is None:
@@ -437,6 +454,7 @@ class BSTtree:
     #interprating in real world
     #we will have to print out the intersection of the tree only which is a preorder transevreal hence the intersection is put in the list firs
     #we will have to check for the left thenright from the bottom of the tree and then use it tobe  appended to the tree
+    #we will first check if the self .left is not nojne in order to append the result
     def update(self,key,value):
         #when updating we update acce to the left this is seen similar tothe ttoo tuple where we acces directly fromthe left
         #to maintain the structure
@@ -448,19 +466,31 @@ class BSTtree:
             #we will then update the value
             self.value=value
         #we will then move to the left then move to the right again
+        #we will check if the self .left is a none inorder to make the tree structure and then reccurse deeper
         if key<self.key:
             #we insertreccursively
+            if self.left is None:
+                self.left=BSTtree(key,value)
+            else:
             #when it is lesser  we insert to theleft  and update 
             #we use self.right .update to directlyupdate to the right
             #this meanswe reccursively caall tothe left
-            self.left= BSTtree.update(self.left,key,value)
+                self.left.update(key,value)
         #when greater then we reccursively callthe right
         #we check at the right keys
         elif key>self.key:
             #we return to the right reccursively
             #we update the right and insert at the right index when it i lesser
-            self.right=BSTtree.update(self.right,key,value)
-        
+            if self.right is None:
+                self.right= BSTtree(key,value)
+            else:
+                self.right.update(key,value)
+    #using the self.left=bstree(key,value) opens up the room forinsertation  
+    #we return self to allow chaining wherethe methods are knwn as one
+    #we return the self because we have altered the structure of the tree
+    
+        return self
+    #we alsoretiurn the wholese  
             
                                                                                                                                                                                                                                                                                                                                                                                                                                                     
     #we will allow for listing all in an inorder transversal type
@@ -479,6 +509,7 @@ class BSTtree:
         #we chck the eft and rightto be none first reccursively and the print the keys so as to return the structure
         #we check if the self .left is not none so as not to pass tjrough the transversal reccursively
         if self.left is not None:
+            #the +equal is used to bring up many valuesat once compared to the + which is only used to bring up one value
             results+=self.left.list_all()
         #we will then apend to the results
         
@@ -497,6 +528,29 @@ class BSTtree:
         #when we try to add the none on the left and right  thi will lead to a typee errorbecause we have a nomne function inside
         #this means that as we append the key we will not return the resultshence leeding to a none to the left and right leading totype error
         return results
+    def display(self,space="\t",factor=0):
+        #we will check for the none and print a zero
+        if self is None:
+            print(space*factor+"0")
+            #we will have to return because w e are transversing upwards the tree and when transversing we need to  return because we are writing out individual by individual
+            return
+        #we will check for the self coming up the tree
+        #checking for the left and roight is none prints only one value at once comapredto hen thereis a node return where the node is the whole structure of the tree
+        #this will only return one value so we will have to modify
+        if self.left is not None and self.right is not  None:
+            print(factor*space+str(self.key))
+            return
+        #we will need to display from the right and print then left
+        #this is an inorder like form of transversal thT we used to append
+        #we will display the left values
+        #we wount use self.left  or self.right is nonein an inorder trsnsversal because  it will destroy the rulesof the tree
+        #if we check the left and right of the self it will only return a single value
+        self.right.display(space,factor+1)
+        print(space*factor+str(self.key))
+        #they say assymtric is not needed to display the function hence we will not add+1 to the left
+        self.left.display(self.left,space,factor)
+        
+        
 #there was a problem during the comparisions
 bsttree=BSTtree(jaadhesh.username,jadhesh)                                                                                                                                                      
 #we willfirst insert the user name then the user value
@@ -514,6 +568,7 @@ sidhat=Users("sidhat","sidhatmatako","sidhat@gmail.com")
 bsttree.update(sidhat.username,sidhat)
 print("updatedsidhat",bsttree.find(sidhat.username))
 print(bsttree.list_all())
+bsttree.display("                ")
 tree=BSTtree
 #THE AVL TREE interprated in the real world situation
 #we will have a tree but we will always have a height of one ofthe root because a tree always has a root or else it wil fall down
@@ -659,7 +714,10 @@ class AVLTee:
         if key<self.key:
             #we will check if the self is a none and reccursivelycall tothe left inorder to maintain the tree structure
             if self.left is None:
-                self.left=Treenode(key,value)
+                #we return the values of the treenode key,value
+                #we give the self .left a tree likestructure to straigten it up
+                #e wil giev the lefta value fuction to unpack it to  node
+                self.left= Treenode(key,value)
             #we will else update the left after the recursive call 
             else:
                 self.left.update(key,value)
@@ -667,29 +725,49 @@ class AVLTee:
         elif key>self.key:
             if self.right is None:
                 #we reccursively make the structure
+                #we return the values of the treenode key and value back
+                #returning the treenode key,value makes the structure of the ttreee maintainable
+                #we will give the right a value function so as to unpack it
                 self.right=Treenode(key,value)
             #we will then update the right structure
             else:
+                #we update diectly because it is a self hence we cant even display the function in a correct manner
                 self.right.update(key,value)
         #we will then update if it is not lesser or not gereater it means it probably is equal to
         else:
             self.value=value
     #we will then list every thing in inordertransversal
+    #a none type error meaning there is a  none object being returned
     def list_all(self):
+        #we should not return none during transversing because it is supposed to return a list of values hence will bring type error
+        
+        if self is None:
+            return []
         results=[]
         #we wil list the same as a TREE NODE
         #we will fist have a list of resilts
         #a local variableis a variable that is accesible inside the function while a global variablecan be accesed outside a function
         
-        
-        if self is None:
-            return []
+        #we check if the self.left has a left child or has no left child  if it is none eans it has nothing but if it is not none means there is a left and right child
+
+        #we have to check for the none  so as to make the structure and dothe reccursive calls
+        #data basedata structures use the none values to represent the lack  of something in a data structure
+        #compared to the parse tuple where we caninsert a none here we cannot insert a none
+        #the parse tuple list all doesnot check for the left is a none or right
+        #if we do not dothe checking we will not have to do the reccursive calls hence the list all reccursive call will be terminated
+        if self.left is not None:
         #we will then have to index the left additioned list and then append the keys we will call the left ressurively by using the list all
-        results+=self.left.list_all()
+            results+=self.left.list_all()
+        
         #we willthen have to append the results
         results.append(self.key)
         #we will then have to add the left indexes
-        results+=self.right.list_all()
+        #we willcheck if it is not none because we are moving inside outwards
+        if self.right is not None:
+            results+=self.right.list_all()
+        #we are supposed toreturn the results inorder to list all
+        return results
+        
 avltree=AVLTee(aakash.username,aakash)
 avltree.insert(jaadhesh.username,jaadhesh)
 avltree.insert(biraj.username,biraj)
@@ -699,6 +777,7 @@ avltree.insert(sonaksh.username,sonaksh)
 avltree.insert(sidhat.username,sidhat)
 
 print("avltree find",avltree.find("haemeth"))
+print("avltreelist",avltree.list_all())
 
 #lest build a default display function
 #we will display from the ey moving downwards
@@ -707,24 +786,6 @@ print("avltree find",avltree.find("haemeth"))
 #we will then look at the left of the intersection and the right of the intersection if they are a none then we return the intersection one by one
 #we will return each intersection of the root
 #we willthen have to  do the function reccursvely to return to the bottom of the tree
-def display(node,space="\t",factor=0):
-    #we willcheck if the node is a none we print a 0
-    #the node is the current root that is being printed
-    if node is None:
-        print(space*factor+"0")
-    #we will then look for the key
-    #thischckes each node value function and prints the node after checking of the left and right are a none
-    if node.left is None and node.right is None:
-        print(space*factor+str(node.key))
-    #we will then perform the  function reccursively
-    #we will start with the node .rightbecause thats howthe human brain visuals wpork
-    #we are using a factor +1  because we are only checking returning one value
-    display(node.right,space,factor+1)
-    #we then have to print the  the str node .key
-    #we are using the str because we can easily display numbers as string hence this is only a displayfunction and will not e used further
-    print(space*factor+str(node.key))
-    #we will then display the left because we need to check on the left after the right becvause thats how the human brain work
-    display(node.left,space,factor+1)
 #the display function is similar to the to_tuple function because the to_tuple function checks foe the leftand right is none
 #this is because we are extractimng the data from the inside then we have to do it in a reccursive manner
 #we then have to do it in a repetetive manner and use commas
@@ -759,7 +820,13 @@ avltree.update(haemaeth.username,haemaeth)
 def isbst(node):
     pass
 
+
 isbst(bsttree)
 
 #all the three we use the self.insert instead ofusing the nodes if we need to use the nodes we can double pass the functions
 #by using a dash
+#the parse tuple does the opposite of the tree transversals it checks for 
+#the parse tuple checksif the left and right is a none and then returns the key
+#the trree ie the avl tree checks if the left and right is not a none
+#the parse tupe works outside in where we have to chec ifthere area none
+#the insertworks inside out so when there is a none ot termionates
