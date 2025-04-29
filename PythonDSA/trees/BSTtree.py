@@ -766,6 +766,8 @@ class AVLTee:
         if self.right is not None:
             results+=self.right.list_all()
         #we are supposed toreturn the results inorder to list all
+        #returning the results ensures that the values from the left and right are added in one and then the final output is released
+        
         return results
         
 avltree=AVLTee(aakash.username,aakash)
@@ -830,3 +832,6 @@ isbst(bsttree)
 #the trree ie the avl tree checks if the left and right is not a none
 #the parse tupe works outside in where we have to chec ifthere area none
 #the insertworks inside out so when there is a none ot termionates
+
+
+
